@@ -1,0 +1,6 @@
+# Files that exceeds limit
+data/bbg_data/sample_oil_firm_8_tables.csv
+
+
+data/external_data/raw
+data/external_data/processed
