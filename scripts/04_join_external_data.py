@@ -8,7 +8,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 train_test_data_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data/train_test_data'
-external_data_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data/external_data'
+external_data_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data/external_data/processed'
 
 ################ Join Imputed train test datasets with external data ###############
 ##### (1) Read the imputed BBG data
@@ -29,7 +29,7 @@ yfinance_df = pd.read_csv(f'{external_data_path}/yahoo_finance_oil_related_data_
 yfinance_df['Date'] = pd.to_datetime(yfinance_df['Date'], format='%Y-%m-%d')
 
 yfinance_df[f"S_P_500_Index_return"] = ((yfinance_df['S&P 500 Index'] - yfinance_df['S&P 500 Index'].shift(252)) / yfinance_df['S&P 500 Index'].shift(252))
-yfinance_df['risk_free_rate'] = yfinance_df['U.S._10_Year_Treasury_Yield']/100
+yfinance_df['risk_free_rate'] = yfinance_df['U.S. 10-Year Treasury Yield']/100
 yfinance_df.replace([np.inf, -np.inf], np.nan, inplace=True)
 
 X_df.sort_values(by='LATEST_PERIOD_END_DT_FULL_RECORD', ascending=True, inplace=True)
@@ -152,7 +152,7 @@ estimate_df['period_ending_date'] = pd.to_datetime(estimate_df['period_ending_da
 
 X_df = X_df.merge(estimate_df, left_on=['LATEST_PERIOD_END_DT_FULL_RECORD_lag1','ID_BB_UNIQUE'], right_on=['period_ending_date','ID_BB_UNIQUE'], how='left')
 
-X_df['CEst_Capital'] = -X_df['CEst_Capital'] ## Convert capital expenditure from negative to positive numbers
+X_df['CEst Capital'] = -X_df['CEst Capital'] ## Convert capital expenditure from negative to positive numbers
 
 ####### S&P estimated data #######
 sp_estimate_df = pd.read_csv(f'{external_data_path}/processed_s&p_estimates.csv')
@@ -173,3 +173,6 @@ test_X_df.columns = test_X_df.columns.str.replace(r'[^a-zA-Z0-9_.()]', '_', rege
 
 train_X_df = train_X_df.astype({col: float for col in train_X_df.columns if isinstance(train_X_df[col].dtype, np.dtypes.Float64DType)})
 test_X_df = test_X_df.astype({col: float for col in test_X_df.columns if isinstance(test_X_df[col].dtype, np.dtypes.Float64DType)})
+
+train_X_df.to_csv(f'{train_test_data_path}/train_X_df_v2.csv', index=False)
+test_X_df.to_csv(f'{train_test_data_path}/test_X_df_v2.csv', index=False)

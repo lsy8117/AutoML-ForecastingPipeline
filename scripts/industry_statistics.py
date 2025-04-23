@@ -7,8 +7,8 @@ warnings.filterwarnings('ignore')
 industry_mapping = read_industry_code_mapping()
 print(industry_mapping)
 
-process_folder_path = '/data'
-save_folder_path = '/data'
+process_folder_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data'
+save_folder_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data'
 process_file_name = 'train_X_df.csv'
 save_file_name = 'train_X_df_w_industry_stats.csv'
 

@@ -13,22 +13,43 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-train_test_data_path = '/data_preparation'
-test_result_path = '/feature_selection/result'
-evluating_data_name = 'w_v11'
+train_test_data_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data/train_test_data'
+test_result_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data/test_results'
+evluating_data_name = 'w_v2'
 
 
 ## Use data with created features
-train_X_df=pd.read_csv(f'{train_test_data_path}/train_X_df_v9.csv')
-train_y_df=pd.read_csv(f'{train_test_data_path}/train_y_df_v9.csv')
-test_X_df=pd.read_csv(f'{train_test_data_path}/test_X_df_v9.csv')
-test_y_df=pd.read_csv(f'{train_test_data_path}/test_y_df_v9.csv')
+train_X_df=pd.read_csv(f'{train_test_data_path}/train_X_df.csv')
+train_y_df=pd.read_csv(f'{train_test_data_path}/train_y_df.csv')
+test_X_df=pd.read_csv(f'{train_test_data_path}/test_X_df.csv')
+test_y_df=pd.read_csv(f'{train_test_data_path}/test_y_df.csv')
+
+##### Remove data rows affected by outliers #####
+outlier = train_X_df['ARD_CAPITAL_EXPENDITURES'].max()
+print('Outlier in capex: ', outlier)
+X_cols = list(train_X_df.columns)
+y_cols = list(train_y_df.columns)
+
+train_df = train_X_df.merge(train_y_df, on=['Year','Quarter','ID_BB_UNIQUE'], how='left')
+test_df = test_X_df.merge(test_y_df, on=['Year','Quarter','ID_BB_UNIQUE'], how='left')
+
+# train_df = pd.concat([train_X_df, train_y_df], axis=1)
+# test_df = pd.concat([test_X_df, test_y_df], axis=1)
+
+train_df = train_df[~train_df.isin([outlier]).any(axis=1)]
+test_df = test_df[~test_df.isin([outlier]).any(axis=1)]
+
+train_X_df = train_df[X_cols]
+train_y_df = train_df[y_cols]
+test_X_df = test_df[X_cols]
+test_y_df = test_df[y_cols]
+
+print(train_X_df.dtypes[train_df.dtypes == 'object'])
 
 
-print(test_X_df)
 
 ## Exclude Year, categorical columns and other irrelevant columns
-cols_excluded = ['period_ending_date','Year','Date', 'YearMonth','LATEST_PERIOD_END_DT_FULL_RECORD','REVISION_ID','ROW_NUMBER','FLAG','SECURITY_DESCRIPTION','RCODE','NFIELDS','EQY_FUND_CRNCY','ANNOUNCEMENT_DT','FUNDAMENTAL_ENTRY_DT','ANNOUNCEMENT_DT_lag1','LATEST_PERIOD_END_DT_FULL_RECORD_lag1']
+cols_excluded = ['Date_x','month_year','Date_y','period_ending_date_x','period_ending_date_y','s_p_estimate_ID_BB_UNIQUE','period_ending_date','Year','Date', 'YearMonth','LATEST_PERIOD_END_DT_FULL_RECORD','REVISION_ID','ROW_NUMBER','FLAG','SECURITY_DESCRIPTION','RCODE','NFIELDS','EQY_FUND_CRNCY','ANNOUNCEMENT_DT','FUNDAMENTAL_ENTRY_DT','ANNOUNCEMENT_DT_lag1','LATEST_PERIOD_END_DT_FULL_RECORD_lag1']
 
 categorical_cols = ['INDUSTRY_SECTOR_NUM_mapped', 'INDUSTRY_GROUP_NUM_mapped',
        'INDUSTRY_SUBGROUP_NUM_mapped', 'Industry_level_4_num_mapped',

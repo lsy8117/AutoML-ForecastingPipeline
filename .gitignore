@@ -1,6 +1,15 @@
 # Files that exceeds limit
-data/bbg_data/sample_oil_firm_8_tables.csv
+data/bbg_data/processed_data.csv
 
 
-data/external_data/raw
-data/external_data/processed
+data/external_data/raw/*
+!data/external_data/raw/.gitkeep
+
+data/external_data/processed/*
+!data/external_data/processed/.gitkeep
+
+data/test_results/*
+!data/test_results/.gitkeep
+
+data/train_test_data/*
+!data/train_test_data/.gitkeep
