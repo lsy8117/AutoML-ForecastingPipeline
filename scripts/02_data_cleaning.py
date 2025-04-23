@@ -14,6 +14,7 @@ final_data_path = '/home/siyi/PycharmProjects/AutoML-ForecastingPipeline/data/bb
 
 
 raw_df = pd.read_csv(raw_data_path)
+raw_df = raw_df[raw_df.columns[~raw_df.columns.str.contains(r'\.\d+$')]]
 print(raw_df.head())
 
 quarter_al_df = primary_quarterly_data_prep(raw_df)
